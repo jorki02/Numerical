@@ -10,13 +10,10 @@ import java.util.Map;
 @Component
 public class TableBuilder {
 
-    public Map<List<Integer>, Double> buildTable(List<Double> x_values, List<Double> y_values, double x, TableFunction tableFunction){
+    public Map<List<Integer>, Double> buildTable(List<Double> x_values, List<Double> y_values, double x,
+                                                 TableFunction tableFunction, StartValuesFunction startValuesFunction){
         Map<List<Integer>, Double> table = new HashMap<>();
-        for(int i = 0; i < x_values.size(); i++){
-            List<Integer> listIndexes = new ArrayList<>();
-            listIndexes.add(i);
-            table.put(listIndexes, y_values.get(i));
-        }
+        startValuesFunction.buildStartValues(table, y_values);
 
         for (int n = 2; n <= x_values.size(); n++) {
             for (int startingIndex = 0; startingIndex <= x_values.size() - n; startingIndex++) {
@@ -26,10 +23,11 @@ public class TableBuilder {
                 }
                 List<Integer> first = indexes.subList(1, indexes.size());
                 List<Integer> second = indexes.subList(0, indexes.size() - 1);
-                table.put(indexes, tableFunction.countValue(x_values, indexes, first, second, table));
+                table.put(indexes, tableFunction.countValue(x_values, y_values, indexes, first, second, table));
             }
         }
 
         return table;
     }
+
 }
